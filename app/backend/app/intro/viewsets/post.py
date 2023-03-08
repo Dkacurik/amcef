@@ -1,4 +1,3 @@
-from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
@@ -14,7 +13,7 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostModelSerializer
 
     def get_serializer_class(self):
-        if self.action == 'update':
+        if self.action == 'update' or self.action == 'partial_update':
             return PostUpdateModelSerializer
         else:
             return super().get_serializer_class()
@@ -36,14 +35,11 @@ class PostViewSet(viewsets.ModelViewSet):
 
     @swagger_auto_schema(
         operation_id='user_posts',
-        manual_parameters=[
-            openapi.Parameter('user_id', openapi.IN_QUERY, type=openapi.TYPE_NUMBER, description='user_id'),
-        ],
         responses={200: PostModelSerializer(many=True)}
     )
-    @action(detail=False, methods=['get'], url_path='user-posts')
+    @action(detail=False, methods=['get'], url_path='user/(?P<user_id>\w+)')
     def user_posts(self, request, *args, **kwargs):
-        user_id = int(request.query_params.get('user_id', None))
+        user_id = int(kwargs['user_id'])
 
         user_posts = get_user_posts(user_id)
 
