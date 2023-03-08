@@ -18,7 +18,7 @@ import environ
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env()
-env.read_env(env.str('ENV_PATH', '../../../dev.env'))
+# env.read_env(env.str('ENV_PATH', '../../../dev.env'))
 BASE_URL = env('BASE_URL')
 
 SECRET_KEY = env('SECRET_KEY')
