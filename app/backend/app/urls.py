@@ -5,7 +5,7 @@ from drf_yasg.views import get_schema_view
 from rest_framework import permissions, routers
 from django.conf.urls.static import static
 
-from app.intro.viewsets import PostViewSet
+from app.intro.viewsets.post import PostViewSet
 
 schema_view = get_schema_view(
     openapi.Info(
