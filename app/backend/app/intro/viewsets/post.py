@@ -5,13 +5,14 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from app.intro.models import Post
-from app.intro.serializers.post import PostModelSerializer
+from app.intro.serializers.post import PostModelSerializer, PostUpdateModelSerializer
 from app.intro.services.post import create_post, get_post, get_user_posts
 
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostModelSerializer
+
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -27,6 +28,19 @@ class PostViewSet(viewsets.ModelViewSet):
         if instance is not None:
             return Response(PostModelSerializer(instance).data)
         return Response({'message': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    @swagger_auto_schema(
+        request_body=PostUpdateModelSerializer(),
+        responses={201: PostModelSerializer()}
+    )
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = PostUpdateModelSerializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response(PostUpdateModelSerializer(serializer.data).data)
 
     @swagger_auto_schema(
         operation_id='user_posts',
