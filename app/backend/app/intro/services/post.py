@@ -28,8 +28,7 @@ def get_post(post_id: int) -> Post:
     if r.status_code == 200:
         response = r.json()
         try:
-            post = Post.objects.get(user_id=int(response['userId']), title=response['title'],
-                                    body=response['body'])
+            post = Post.objects.get(id=post_id)
         except:
             post = create_post(user_id=int(response['userId']), title=response['title'],
                                body=response['body'])
